@@ -1,0 +1,7 @@
+#! /usr/bin/env ruby -an
+
+BEGIN {$/="\n\n"; $max=0}
+END {puts "Elf #{$maxelf} carries most calories: #{$max}"}
+
+$sum=eval $_.split.join("+")
+$max=$sum && $maxelf=$. if $sum > $max
