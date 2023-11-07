@@ -1,0 +1,7 @@
+#! /usr/bin/env perl -wn
+
+BEGIN {$/="\n\n"; our $max=0; our $maxelf=0;}
+END {print "Elf $maxelf carries most calories: $max\n";}
+
+$sum = eval join('+', split('\n'));
+if ($sum > $max) {$max=$sum; $maxelf=$.;}
