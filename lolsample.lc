@@ -1,11 +1,28 @@
-BTW i r run using lci
 HAI 1.2
-  CAN HAS STDIO?
+  BTW CAN HAS STDIO?
+  I HAS A yarn ITZ "0"
+  I HAS A last1 ITZ "fOoBaRbAz"
+  I HAS A max ITZ 0
+  I HAS A maxelf ITZ 0
+  I HAS A elf ITZ 1
   I HAS A count ITZ 0
-  VISIBLE "HAO MANI???!?"
-  GIMMEH count, count IS NOW A NUMBR
-  count R PRODUKT OF -1 AN count    BTW I HAS A count ITZ minus GIMMEH
-  IM IN YR BARN NERFIN YR itch TIL BOTH SAEM itch AN count
-    VISIBLE SUM OF PRODUKT OF -1 AN SUM OF itch AN count AN count " HAI WORLD!!!1! "
-  IM OUTTA YR BARN
+  IM IN YR CAVE
+    GIMMEH yarn
+    BOTH OF BOTH SAEM yarn AN "" AN BOTH SAEM last1 AN "", O RLY?
+      YA RLY, GTFO
+    OIC
+    last1 R yarn
+    BOTH SAEM yarn AN "", O RLY?
+      YA RLY
+        count R 0
+        elf R SUM OF elf AN 1
+      NO WAI
+        yarn R MAEK yarn A NUMBR
+        count R SUM OF count AN yarn
+        DIFFRINT yarn AN SMALLR OF count AN max, O RLY?
+          YA RLY, max R count, maxelf R elf
+        OIC
+    OIC
+  IM OUTTA YR CAVE
+  VISIBLE "Elf " maxelf " caries most calories, " max
 KTHXBYE
