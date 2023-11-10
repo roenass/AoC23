@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     char line[len];
 
     while (fgets(line,len,stdin)) {
-        // printf("%i: (%lu) %i %s", elf, strlen(line), line[0], line);
+        // printf("%i: (%lu) %i - %s", elf, strlen(line), count, line);
         if(line[0] == '\n') {
             if(count>max) {
                 maxelf=elf;
@@ -23,5 +23,6 @@ int main(int argc, char **argv) {
             count+= (int)strtol(line, (char **)NULL, 10);
         }
     }
-    printf("Elf %i carries %i calories\n", elf, max);
+    printf("Elf %i carries most calories: %i\n", maxelf, max);
+    return(0);
 }
