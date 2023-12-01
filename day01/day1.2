@@ -1,0 +1,42 @@
+#! /usr/bin/env ruby -an
+
+BEGIN {$sum=0}
+END {puts "Calibration value: #{$sum}"}
+
+$prefix=""
+$rest=$_
+while $rest.match(/....*$/)
+#puts "rest0 " + $rest
+    $rest = $rest.gsub(/^oneight/,"18")
+    $rest = $rest.gsub(/^twone/,"21")
+    $rest = $rest.gsub(/^threeight/,"38")
+    $rest = $rest.gsub(/^fiveight/,"58")
+    $rest = $rest.gsub(/^sevenine/,"79")
+    $rest = $rest.gsub(/^eightwo/,"82")
+    $rest = $rest.gsub(/^eighthree/,"83")
+    $rest = $rest.gsub(/^nineight/,"98")
+    $rest = $rest.gsub(/^one/,"1")
+    $rest = $rest.gsub(/^two/,"2")
+    $rest = $rest.gsub(/^three/,"3")
+    $rest = $rest.gsub(/^four/,"4")
+    $rest = $rest.gsub(/^five/,"5")
+    $rest = $rest.gsub(/^six/,"6")
+    $rest = $rest.gsub(/^seven/,"7")
+    $rest = $rest.gsub(/^eight/,"8")
+    $rest = $rest.gsub(/^nine/,"9")
+#puts "rest1 " + $rest
+    $first = $rest.match(/^(.)/)[1]
+    $prefix += $rest.match(/^(.)/)[1]
+    $rest = $rest.match(/^.(.*)$/)[1]
+#puts "rest2 " + $rest
+#puts "prefix " + $prefix
+end
+$_ = $prefix + $rest
+
+#puts $_
+
+$first = $_.match(/[^0-9]*([0-9]).*$/)[1]
+$last  = $_.match(/.*([0-9])[^0-9]*$/)[1]
+
+#puts $first + $last
+$sum += ($first+$last).to_i
