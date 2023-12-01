@@ -6,5 +6,4 @@ END {puts "Calibration value: #{$sum}"}
 $first = $_.match(/[^0-9]*([0-9]).*$/)[1]
 $last  = $_.match(/.*([0-9])[^0-9]*$/)[1]
 
-puts $first + $last
 $sum += ($first+$last).to_i
