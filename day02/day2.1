@@ -1,0 +1,32 @@
+#! /usr/bin/env perl -wn
+
+BEGIN {our $idsum=0;}
+END {print "Sum of possible IDs: $idsum\n";}
+
+my ($gid, $rest) = split(": ");
+$gid =~ s/Game //;
+
+my @sets = split("; ", $rest);
+
+$idsum += $gid;
+foreach my $set (@sets) {
+    my @values = split(", ", $set);
+    my ($blues, $reds, $greens) = (0,0,0);
+    foreach my $value (@values) {
+        my $amount = $value;
+        $amount =~ s/[^0-9]//g;
+        if ($value =~ /blue/) {
+            $blues += $amount;
+        } elsif ($value =~ /red/) {
+            $reds += $amount;
+        } elsif ($value =~ /green/) {
+            $greens += $amount;
+        }
+    }
+    print "blues $blues, reds $reds, greens $greens\n";
+    if ($blues > 14 || $reds > 12 || $greens > 13) {
+        $idsum -= $gid;
+        print "NAY $gid\n";
+        last;
+    }
+}

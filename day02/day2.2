@@ -1,0 +1,28 @@
+#! /usr/bin/env perl -wn
+
+BEGIN {our $powersum=0;}
+END {print "Powersum: $powersum\n";}
+
+# Per GAME, determine the maxima of R, G, B
+# SUM the PRODUCTS of these maxima of all GAMES
+
+my ($gid, $rest) = split(": ");
+my @sets = split("; ", $rest);
+my ($bluemax, $redmax, $greenmax) = (0,0,0);
+
+foreach my $set (@sets) {
+    my @values = split(", ", $set);
+    foreach my $value (@values) {
+        my $amount = $value;
+        $amount =~ s/[^0-9]//g;
+        if ($value =~ /blue/ && $amount > $bluemax) {
+            $bluemax = $amount;
+        } elsif ($value =~ /red/ && $amount > $redmax) {
+            $redmax = $amount;
+        } elsif ($value =~ /green/ && $amount > $greenmax) {
+            $greenmax = $amount;
+        }
+    }
+}
+$powersum += $bluemax * $redmax * $greenmax;
+
