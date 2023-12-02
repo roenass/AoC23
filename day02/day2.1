@@ -23,10 +23,8 @@ foreach my $set (@sets) {
             $greens += $amount;
         }
     }
-    print "blues $blues, reds $reds, greens $greens\n";
     if ($blues > 14 || $reds > 12 || $greens > 13) {
         $idsum -= $gid;
-        print "NAY $gid\n";
         last;
     }
 }
