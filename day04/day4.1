@@ -1,0 +1,17 @@
+#! /usr/bin/env ruby -an
+
+require 'set'
+
+BEGIN {sum=0}
+END {puts "Total points: #{sum}"}
+
+thiscard=0
+
+card, value, *dummy =$_.split(": ")
+winning, numbers, *dummy = value.split(" | ")
+winners= Set.new(winning.split);
+
+numbers.split.each do |n|
+    thiscard+=1 if winners === n
+end
+sum += thiscard > 0?2**(thiscard-1):0
