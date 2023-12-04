@@ -1,0 +1,40 @@
+#! /usr/bin/env ruby -an
+
+require 'set'
+
+def cardmatches(value)
+    wins = []
+    winning, numbers = value.split(" | ")
+    winners = Set.new(winning.split);
+
+    numbers.split.each do |n|
+        wins.push(n) if winners === n
+    end
+    return wins
+end
+
+def numcardmatches(value)
+    return cardmatches(value).length
+end
+
+BEGIN {cards = [0]; scores = [0]; sum=0}
+END {
+    cards.each_index do |i|
+        sum += cards[i]
+    end
+    puts "Total cards: #{sum}"
+}
+
+card, value = $_.split(": ")
+card = card.gsub(/^Card /, "").to_i
+cards[card] = defined?(cards[card]) ? cards[card].to_i+1 : 1;
+multiplier = cards[card].to_i
+
+matches=cardmatches(value)
+scores[card]=matches.length
+extra=card+1.to_i
+matches.each do |m|
+    cards[extra] = defined?(cards[extra]) ? cards[extra].to_i+multiplier : multiplier
+    extra+=1
+end
+
