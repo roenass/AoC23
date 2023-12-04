@@ -5,11 +5,11 @@ BEGIN {sum=0}
 END {puts "Total points: #{sum}"}
 
 thiscard=0
-card, value, *dummy =$_.split(": ")
-winning, numbers, *dummy = value.split(" | ")
+card, value = $_.split(": ")
+winning, numbers = value.split(" | ")
 winners= Set.new(winning.split);
 
 numbers.split.each do |n|
     thiscard+=1 if winners === n
 end
-sum += thiscard > 0?2**(thiscard-1):0
+sum += (2**(thiscard-1)).to_i
