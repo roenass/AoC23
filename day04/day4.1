@@ -1,12 +1,10 @@
 #! /usr/bin/env ruby -an
-
 require 'set'
 
 BEGIN {sum=0}
 END {puts "Total points: #{sum}"}
 
 thiscard=0
-
 card, value, *dummy =$_.split(": ")
 winning, numbers, *dummy = value.split(" | ")
 winners= Set.new(winning.split);
