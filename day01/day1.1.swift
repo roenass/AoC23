@@ -6,13 +6,11 @@ var inputS: [String] = []
 var sum = 0
 
 while let input = readLine() {
-    if !inputS.contains(input) {
-        inputS.append(input)
-    }
+    inputS.append(input)
 }
 
 for l in inputS {
-    var num=0
+    var num = 0
     if let match = l.firstMatch(of: simpleDigits) {
         num = Int(match.1) ?? 0
         sum = sum + num * 10
