@@ -31,8 +31,6 @@ func fillMap(dst: Int, src: Int, len: Int, map: [Int: [Int]]) -> [Int: [Int]] {
 
 func lookupMap(src: Int, map: [Int: [Int]]) -> Int {
     for (k,v) in Array(map).sorted(by: {$0.0 < $1.0}) {
-        if src > k && src >= k+v[1] {
-        }
         if src > k && src < k+v[1] {
             let offset = src - k
             if offset < k+v[1] {
