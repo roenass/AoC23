@@ -21,7 +21,6 @@ var light2temperaturemap        : [Int: [Int]] = [:]
 var temperature2humiditymap     : [Int: [Int]] = [:]
 var humidity2locationmap        : [Int: [Int]] = [:]
 
-
 func fillMap(dst: Int, src: Int, len: Int, map: [Int: [Int]]) -> [Int: [Int]] {
     var newmap = map
     //for i in 0...len-1 { newmap[src+i] = dst+i }
@@ -43,14 +42,10 @@ func lookupMap(src: Int, map: [Int: [Int]]) -> Int {
 
 // ---- Main ----
 
-while let input = readLine() {
-    inputS.append(input)
-}
+while let input = readLine() { inputS.append(input) }
 
 for l in inputS {
-    if l.hasPrefix("seeds: ") { // true
-        seeds = l.deletingPrefix("seeds: ")
-    }
+    if l.hasPrefix("seeds: ")  { seeds = l.deletingPrefix("seeds: ") }
     if l.hasPrefix("seed-to-soil map:")             { currentMap = 1 }
     if l.hasPrefix("soil-to-fertilizer map:")       { currentMap = 2 }
     if l.hasPrefix("fertilizer-to-water map:")      { currentMap = 3 }
@@ -84,15 +79,6 @@ for l in inputS {
         }
     }
 }
-
-/*
-    The gardener and his team want to get started as soon as possible, so
-    they'd like to know the closest location that needs a seed. Using these
-    maps, find the lowest location number that corresponds to any of the
-    initial seeds. To do this, you'll need to convert each seed number through
-    other categories until you can find its corresponding location number.
- */
-
 
 for s in seeds.split(separator: " ") {
     if let i = Int(s) {
