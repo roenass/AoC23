@@ -1,0 +1,20 @@
+#! /usr/bin/env ruby -an
+
+BEGIN{timeline="", distline=""}
+END {
+    beats=1
+    times=timeline.split(":").to_a[1..-1]
+    dists=distline.split(":").to_a[1..-1]
+    times.each_index {  |i|
+        t=times[i].to_i ; d=dists[i].to_i
+        a=-1 ; b=t ; c=-d-1 ; $D=Math.sqrt(b**2 - 4*a*c)  
+        s1 = ((-b + $D) / 2*a).ceil
+        s2 = ((-b - $D) / 2*a).floor
+        beats *= s2-s1+1 if (s1 > 0 && s2 > 0 && s1 <= t && s2 <= t)
+    }
+    puts "Beats: #{beats}"
+}
+
+$_ = $_.gsub(" ","")
+timeline=$_ if $_ =~ /^Time:/
+distline=$_ if $_ =~ /^Distance:/
