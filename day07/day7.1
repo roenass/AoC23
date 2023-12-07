@@ -15,24 +15,22 @@ END {
 
 (deal, bet) = $_.split
 
-sdeal = deal.each_char.sort().join("")
-
 maxcat=9
 cat=maxcat
-if md = /(?<card>[AKQJT2-9]).*\k<card>\k<card>\k<card>\k<card>/.match(sdeal)
+if md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>.*\k<card>/.match(deal)
     cat -= 1
-elsif md = /(?<card>[AKQJT2-9])\k<card>\k<card>\k<card>/.match(sdeal)
+elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>/.match(deal)
     cat -= 2
-elsif md = /(?<card>[AKQJT2-9])\k<card>\k<card>/.match(sdeal)
-    if sdeal.gsub(md[:card], '')[0] != sdeal.gsub(md[:card], '')[1]
+elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>/.match(deal)
+    if deal.gsub(md[:card], '')[0] != deal.gsub(md[:card], '')[1]
         cat -= 3
     end
 end
 if cat < maxcat
     deal = (cat).to_s + deal
 else
-    if md = /(?<card>[AKQJT2-9])\k<card>/.match(sdeal)
-        if md = /(?<card>[AKQJT2-9])\k<card>/.match(sdeal.gsub(md[:card], ''))
+    if md = /(?<card>[AKQJT2-9]).*\k<card>/.match(deal)
+        if md = /(?<card>[AKQJT2-9]).*\k<card>/.match(deal.gsub(md[:card], ''))
             cat -= 4
         else
             cat -= 5
