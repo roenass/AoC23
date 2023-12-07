@@ -2,7 +2,7 @@
 
 BEGIN{hand = {}}
 END {
-    rank = 0; sum = 0
+    rank=0; sum=0
     hand.sort.each { |deal, bet|
         rank += 1
         sum += rank * bet.to_i
@@ -15,8 +15,7 @@ END {
 
 (deal, bet) = $_.split
 
-maxcat=9
-cat=maxcat
+maxcat=9; cat=maxcat
 if md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>.*\k<card>/.match(deal)
     cat -= 1
 elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>/.match(deal)
@@ -43,5 +42,4 @@ end
 
 
 deal16 = deal.tr('AKQJT', 'edcba')
-#puts "#{deal}: cat #{deal16[0]}:#{deal16[1..-1]}/#{deal16.to_i(16)}, bet #{bet}"
 hand[deal16.to_i(16)] = bet
