@@ -1,0 +1,49 @@
+#! /usr/bin/env ruby -an
+
+BEGIN{hand = {}}
+END {
+    rank = 0; sum = 0
+    hand.sort.each { |deal, bet|
+        rank += 1
+        sum += rank * bet.to_i
+#        orgdeal = deal.to_s(16).tr('edcba', 'AKQJT')[1..-1]
+#        puts "#{rank}\t#{orgdeal}\t#{deal}\t#{bet}\t#{rank * bet.to_i}\t#{sum}"
+#        puts "#{orgdeal} #{bet}"
+    }
+    puts "Sum: #{sum}"
+}
+
+(deal, bet) = $_.split
+
+sdeal = deal.each_char.sort().join("")
+
+maxcat=9
+cat=maxcat
+if md = /(?<card>[AKQJT2-9]).*\k<card>\k<card>\k<card>\k<card>/.match(sdeal)
+    cat -= 1
+elsif md = /(?<card>[AKQJT2-9])\k<card>\k<card>\k<card>/.match(sdeal)
+    cat -= 2
+elsif md = /(?<card>[AKQJT2-9])\k<card>\k<card>/.match(sdeal)
+    if sdeal.gsub(md[:card], '')[0] != sdeal.gsub(md[:card], '')[1]
+        cat -= 3
+    end
+end
+if cat < maxcat
+    deal = (cat).to_s + deal
+else
+    if md = /(?<card>[AKQJT2-9])\k<card>/.match(sdeal)
+        if md = /(?<card>[AKQJT2-9])\k<card>/.match(sdeal.gsub(md[:card], ''))
+            cat -= 4
+        else
+            cat -= 5
+        end
+    else
+        cat -= 6
+    end
+    deal = (cat).to_s + deal
+end
+
+
+deal16 = deal.tr('AKQJT', 'edcba')
+#puts "#{deal}: cat #{deal16[0]}:#{deal16[1..-1]}/#{deal16.to_i(16)}, bet #{bet}"
+hand[deal16.to_i(16)] = bet
