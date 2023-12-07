@@ -6,9 +6,6 @@ END {
     hand.sort.each { |deal, bet|
         rank += 1
         sum += rank * bet.to_i
-#        orgdeal = deal.to_s(16).tr('edcba', 'AKQJT')[1..-1]
-#        puts "#{rank}\t#{orgdeal}\t#{deal}\t#{bet}\t#{rank * bet.to_i}\t#{sum}"
-#        puts "#{orgdeal} #{bet}"
     }
     puts "Sum: #{sum}"
 }
@@ -21,8 +18,10 @@ if md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>.*\k<card>/.match(deal
 elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>/.match(deal)
     cat -= 2
 elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>/.match(deal)
-    if deal.gsub(md[:card], '')[0] != deal.gsub(md[:card], '')[1]
+    if deal.gsub(md[:card], '')[0] == deal.gsub(md[:card], '')[1]
         cat -= 3
+   else
+        cat -= 4
     end
 end
 if cat < maxcat
@@ -30,12 +29,12 @@ if cat < maxcat
 else
     if md = /(?<card>[AKQJT2-9]).*\k<card>/.match(deal)
         if md = /(?<card>[AKQJT2-9]).*\k<card>/.match(deal.gsub(md[:card], ''))
-            cat -= 4
-        else
             cat -= 5
+        else
+            cat -= 6
         end
     else
-        cat -= 6
+        cat -= 7
     end
     deal = (cat).to_s + deal
 end

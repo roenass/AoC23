@@ -1,0 +1,83 @@
+#! /usr/bin/env ruby -an
+
+BEGIN{hand = {}; maps = {}}
+END {
+    rank=0; sum=0
+    hand.sort.each { |deal, v|
+        (bet, category) = v.split(":")
+        rank += 1
+        sum += rank * bet.to_i
+        orgdeal = deal.to_s(16).tr('edc1a', 'AKQJT')[1..-1]
+#        puts "#{rank} #{orgdeal} #{bet} #{category}"
+#        puts "#{rank} #{orgdeal} #{bet}"
+    }
+    puts "Sum: #{sum}"
+}
+
+(deal, bet) = $_.split
+jokers = deal.gsub(/[^J]/, '').length
+
+#puts "#{deal} has #{jokers}" if jokers > 0
+maxcat=9; cat=maxcat
+category=""
+if md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>.*\k<card>/.match(deal) \
+    or (md = /(?<card>[AKQT2-9]).*\k<card>.*\k<card>.*\k<card>/.match(deal) and jokers > 0) \
+    or (md = /(?<card>[AKQT2-9]).*\k<card>.*\k<card>/.match(deal) and jokers > 1) \
+    or (md = /(?<card>[AKQT2-9]).*\k<card>.*/.match(deal) and jokers > 2) \
+    or (jokers > 3)
+    cat -= 1
+    category="five of a kind"
+elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>.*\k<card>/.match(deal) \
+    or (md = /(?<card>[AKQT2-9]).*\k<card>.*\k<card>/.match(deal) and jokers > 0) \
+    or (md = /(?<card>[AKQT2-9]).*\k<card>/.match(deal) and jokers > 1) \
+    or (md = /(?<card>[J]).*\k<card>.*\k<card>/.match(deal)) \
+    or (jokers > 2)
+    cat -= 2
+    category="four of a kind"
+elsif md = /(?<card>[AKQJT2-9]).*\k<card>.*\k<card>/.match(deal)
+    postdeal = deal.gsub(/[^#{md[:card]}]/, '')
+    if postdeal[0] != postdeal[1]
+        cat -= 3; category="full house"
+    else
+        cat -= 4; category="three of a kind"
+    end
+elsif (md = /(?<card>[AKQT2-9]).*\k<card>/.match(deal) and jokers > 0)
+    postdeal = deal.gsub(/[^#{md[:card]}]/, '')
+    if postdeal[0] == postdeal[1]
+        cat -= 3 ; category="full house"
+    else
+        cat -= 4 ; category="three of a kind"
+    end
+elsif md = /(?<card>[J]).*\k<card>/.match(deal)
+    cat -= 4; category="three of a kind"
+end
+if cat < maxcat
+    deal = (cat).to_s + deal
+else
+    if md = /(?<card>[AKQJT2-9]).*\k<card>/.match(deal)
+        jokers=0 if md[:card] == "J" 
+        if md = /(?<card>[AKQJT2-9]).*\k<card>/.match(deal.gsub(md[:card], ''))
+            cat -= 5            # two pairs
+            category="two pair"
+        else                    # all different
+            if (jokers > 0)     # second another pair with a joker?
+                cat -= 5
+            else                # all different, no joker either
+                cat -= 6        # one pair
+                category="one pair"
+           end
+        end
+    else                        # all different
+        if (jokers > 0)         # first pair with a joker?
+            cat -= 6
+            category="one pair"
+        else                    # all different, no joker
+            cat -= 7
+            category="high card"
+        end
+    end
+    deal = (cat).to_s + deal
+end
+
+deal16 = deal.tr('AKQJT', 'edc1a')
+hand[deal16.to_i(16)] = [bet, category].join(":")
