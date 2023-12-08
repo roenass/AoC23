@@ -1,9 +1,7 @@
 #! /usr/bin/env python3
 
 import sys
-import re
 from math import gcd
-from collections import Counter
 
 
 def lcm(ls):
@@ -45,7 +43,12 @@ def ReadInput(Rdr):
     moves['R'][st] = r
   return steps, moves
 
-InRdr = sys.stdin.read().strip()
-Steps, Moves = ReadInput(InRdr)
-for FirstPart in [False, True]:
- print(FindPath(FirstPart, Steps, Moves))
+def Solve():
+  InRdr = sys.stdin.read().strip()
+  Steps, Moves = ReadInput(InRdr)
+  for FirstPart in [False, True]:
+   print(FindPath(FirstPart, Steps, Moves))
+
+# --- Main ----
+
+Solve()
