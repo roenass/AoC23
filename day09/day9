@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import sys
+
+def extrapolate1(array):
+    if all(x == 0 for x in array):
+        return 0
+    deltas = [y - x for x, y in zip(array, array[1:])]
+    diff = extrapolate1(deltas)
+    return array[-1] + diff
+
+def extrapolate2(array):
+    if all(x == 0 for x in array):
+        return 0
+    deltas = [y - x for x, y in zip(array, array[1:])]
+    diff = extrapolate2(deltas)
+    return array[0] - diff
+
+total1 = 0
+lines = sys.stdin.read().split('\n')
+for line in lines:
+    nums = list(map(int, line.split()))
+    total1 += extrapolate1(nums)
+
+total2 = 0
+for line in lines:
+    nums = list(map(int, line.split()))
+    total2 += extrapolate2(nums)
+
+print('1:', total1)
+print('2:', total2)
