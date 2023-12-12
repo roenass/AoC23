@@ -1,0 +1,56 @@
+#!/usr/bin/env perl -wn
+
+BEGIN {our $totalcombinations=0;}
+END {print "Combinations: $totalcombinations\n";}
+
+sub check($$) {
+    my ($a, $n) = @_;
+    my (@s);
+
+    $a =~ s/[^#.]//g; $a =~ s/[.]+/./g; $a =~ s/^[.]//g; $a =~ s/[.]$//g;
+    @s = split(/[.]/, $a);
+    foreach (split(',', $n)) {
+        $re = qr/^#{$_}$/;
+        if (@s and $s[0] =~ /$re/) {
+            shift(@s)
+        } else {
+            return 0
+        }
+    }
+    return 0 if @s;         # Not all '#'-runs accounted for?
+    return 1;
+}
+
+sub solve {
+    my ($pfx, $a, $n) = @_;
+    my @s = split('', $a);
+    my @g = split(',', $n);
+    my $solutions = 0;
+    my $jokers = scalar grep(/\?/, @s);
+
+    if ($a eq "") {
+        $solutions = check($pfx, $n);
+        return $solutions;
+    }
+
+    $pfx = '>'.$pfx;
+
+    my $first = shift(@s);
+    if ($first eq '?') {
+        $solutions += solve($pfx.'.', join('', @s), join(',', @g));
+        $solutions += solve($pfx.'#', join('', @s), join(',', @g)); # Solve assuming first is '#'
+    } else {
+        $solutions += solve($pfx.$first, join('', @s), join(',', @g)); # Solve rest
+    }
+    return $solutions;
+}
+
+if (/\?/) {
+    my ($arrangement, $numbers) = split();
+
+    my $solves=solve('', $arrangement, $numbers);;
+    $totalcombinations += $solves;
+#    print "T[$.]: $solves ($totalcombinations)\n";
+} else {
+    $totalcombinations++
+}
