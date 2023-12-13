@@ -1,0 +1,198 @@
+#!/usr/bin/env lua
+
+function split(pString, pPattern)
+   local Table = {}
+   local fpat = "(.-)" .. pPattern
+   local last_end = 1
+   local s, e, cap = pString:find(fpat, 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+     table.insert(Table,cap)
+      end
+      last_end = e+1
+      s, e, cap = pString:find(fpat, last_end)
+   end
+   if last_end <= #pString then
+      cap = pString:sub(last_end)
+      table.insert(Table, cap)
+   end
+   return Table
+end
+
+function max(a, b)
+    if a > b then return a end
+    return b
+end
+
+function min(a, b)
+    if a < b then return a end
+    return b
+end
+
+function rowstring(G, row)
+    return table.concat(G[row])
+end
+
+function columnstring(G, col)
+    colstr=''
+    for i = 1, #G do colstr = colstr..G[i][col] end
+    return colstr
+end
+
+function readgrids(input)
+    local grids = {}
+    for g, gridinput in pairs(split(input, '\n\n')) do
+        grids[g]={}
+        grids[g]=readgrid(gridinput)
+    end
+    return grids
+end
+
+function readgrid(input)
+    local grid={}
+    for r, line in pairs(split(input, '\n')) do
+        grid[r]={}
+        j=1
+        for c in string.gmatch(line, ".") do
+           grid[r][j] = c
+           j=j+1
+        end
+    end
+    return grid
+end
+
+function rotategrid(G)
+-- assumes the grid to be rectangular
+    local grid={}
+
+    for c=1, #G[1] do
+        grid[c] = {}
+        for i = 1, #G do grid[c][i] = G[i][c] end
+     end
+    return grid
+end
+
+function printgrid(G)
+    for i=1, #G do
+        print(i, rowstring(G, i))
+    end
+    return G
+end
+
+function printgridstring(G)
+    for i=1, #G do
+        print(i, G[i])
+    end
+    return G
+end
+
+function gridtostrings(G)
+    local grid={}
+    for i = 1, #G do
+        grid[i]=table.concat(G[i])
+    end
+    return grid
+end
+
+function countdiffs(a, b)
+    diffs=0
+    A = {}; B = {}
+    i=0; for c in string.gmatch(a, ".") do
+       A[i] = c
+       i=i+1
+    end
+    i=0; for c in string.gmatch(b, ".") do
+       B[i] = c
+       i=i+1
+    end
+    for i, v in pairs(A) do
+        if (A[i] ~= B[i]) then
+            diffs=diffs+1
+        end
+    end
+    return diffs
+end
+
+
+-- Need to find a *different* new reflection line,
+-- Which is created by fixing 1 smudge on an existing line
+-- So, we need a pair of adjacent lines with diff count of 1
+-- Then apply that fix, and find mirrors
+
+function findfixsmudges(GS)
+    for i=1, #GS-1 do
+        if GS[i] == GS[i+1] then
+            local lacking=0
+            local candidate=0
+            check=min(i-1, #GS-i-1)
+            for j=1, check do
+                mirr0=i-j; mirr1=i+1+j
+--                print('check', mirr0, 'against', mirr1)
+                if countdiffs(GS[mirr0], GS[mirr1]) == 1 then
+                    lacking = lacking + 1
+                    candidate = mirr0; substitute=mirr1
+                end
+            end
+            if lacking == 1 then
+--                print('New '..candidate, substitute, GS[candidate], GS[substitute])
+                GS[substitute] = GS[candidate]
+                return GS
+            end
+        end
+    end
+    return GS
+end
+
+function findmirrors(G, p)
+    local GS
+    if p==2 then GS=findfixsmudges(G) else GS=G end
+    mirrors=0; remainingsmudges=0
+    for i=1, #GS-1 do
+        if GS[i] == GS[i+1] then
+            check=min(i-1, #GS-i-1)
+            valid=true
+            for j=1, check do
+                mirr0=i-j
+                mirr1=i+1+j
+--                print('check', mirr0, 'against', mirr1)
+                if GS[mirr0] == GS[mirr1] then
+--                    print(i, 'OK', GS[mirr0], GS[mirr1])
+                else
+--                    print(i, 'NOK', mirr0, mirr1, GS[mirr0], GS[mirr1])
+                    valid=false
+                end
+            end
+            if valid then mirrors = mirrors + i end
+        end
+    end
+    return mirrors
+end
+
+function solve(G, p)
+    local solution=0;
+    local GS=gridtostrings(G)
+    local GRS=gridtostrings(rotategrid(G))
+    local rowmirrors=0
+    local colmirrors=0
+
+    rowmirrors=100*findmirrors(GS, p)
+    colmirrors=1*findmirrors(GRS, p)
+    solution=rowmirrors+colmirrors
+    return solution
+end
+
+-------------------------------------------------------------------------------
+-- Main
+-------------------------------------------------------------------------------
+
+grids = readgrids(io.read("*all"))
+
+for ip, p in pairs({1,2}) do
+    local total=0
+    for ig, g in pairs(grids) do
+--        print('part', ip, 'grid', ig)
+        total = total + solve(g, p)
+    end
+    print('part', p,  total)
+end
+
