@@ -1,29 +1,26 @@
 #!/usr/bin/env lua
 
-function split(pString, pPattern)
-   local Table = {}
-   local fpat = "(.-)" .. pPattern
-   local last_end = 1
-   local s, e, cap = pString:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-     table.insert(Table,cap)
-      end
-      last_end = e+1
-      s, e, cap = pString:find(fpat, last_end)
-   end
-   if last_end <= #pString then
-      cap = pString:sub(last_end)
-      table.insert(Table, cap)
-   end
-   return Table
+function split(pStr, pPat)
+    local T = {}
+    local fpat = "(.-)" .. pPat
+    local last_end = 1
+    local s, e, cap = pStr:find(fpat, 1)
+    while s do
+        if s ~= 1 or cap ~= "" then table.insert(T,cap) end
+        last_end = e+1
+        s, e, cap = pStr:find(fpat, last_end)
+    end
+    if last_end <= #pStr then
+        cap = pStr:sub(last_end)
+        table.insert(T, cap)
+    end
+    return T
 end
 
 function readgrids(input)
     local grids = {}
     for g, gridinput in pairs(split(input, '\n\n')) do
-        grids[g]={}
-        grids[g]=readgrid(gridinput)
+        grids[g]={}; grids[g]=readgrid(gridinput)
     end
     return grids
 end
@@ -31,11 +28,9 @@ end
 function readgrid(input)
     local grid={}
     for r, line in pairs(split(input, '\n')) do
-        grid[r]={}
-        j=1
+        grid[r]={}; j=1
         for c in string.gmatch(line, ".") do
-           grid[r][j] = c
-           j=j+1
+           grid[r][j] = c; j=j+1
         end
     end
     return grid
@@ -43,9 +38,7 @@ end
 
 function gridtostring(G)
     local str=''
-    for i = 1, #G do
-        str = str..table.concat(G[i])
-    end
+    for i = 1, #G do str = str..table.concat(G[i]) end
     return str
 end
 
@@ -54,8 +47,7 @@ function tiltnorth(G)
         for i=2, #G do
             for j, object in pairs(G[i]) do
                 if object == 'O' and G[i-1][j] == '.' then
-                    G[i-1][j] = 'O'
-                    G[i][j]   = '.'
+                    G[i-1][j] = 'O'; G[i][j]   = '.'
                 end
             end        
         end
@@ -69,8 +61,7 @@ function tiltwest(G)
             for i, g in pairs(G) do
                 object=G[i][j]
                 if object == 'O' and G[i][j-1] == '.' then
-                    G[i][j]   = '.'
-                    G[i][j-1] = 'O'
+                    G[i][j]   = '.'; G[i][j-1] = 'O'
                 end
             end        
         end
@@ -83,8 +74,7 @@ function tiltsouth(G)
         for i=1, #G-1 do
             for j, object in pairs(G[i]) do
                 if object == 'O' and G[i+1][j] == '.' then
-                    G[i+1][j] = 'O'
-                    G[i][j]   = '.'
+                    G[i+1][j] = 'O'; G[i][j]   = '.'
                 end
             end        
         end
@@ -98,8 +88,7 @@ function tilteast(G)
             for i, g in pairs(G) do
                 object=G[i][j]
                 if object == 'O' and G[i][j+1] == '.' then
-                    G[i][j+1] = 'O'
-                    G[i][j]   = '.'
+                    G[i][j+1] = 'O'; G[i][j]   = '.'
                 end
             end        
         end
@@ -128,18 +117,18 @@ end
 function solve(G, p)
     if p==1 then return count(tiltnorth(G)) end
     
-    local cache = {}        -- gonna skip cycles
+    local previously = {}
     local maxspins=1000000000
     local spins=1
     while spins <= maxspins do
         G=spin(G)
         local thiscfg = gridtostring(G)
-        if cache[thiscfg] ~= nil then
-            local cycle = spins - cache[thiscfg]
-            local remainingcycles = (maxspins-spins)//cycle
-            spins = spins + remainingcycles * cycle
+        if previously[thiscfg] ~= nil then
+            local cyclelength = spins - previously[thiscfg]
+            local remainingcycles = (maxspins-spins)//cyclelength
+            spins = spins + remainingcycles * cyclelength
         end
-        cache[thiscfg] = spins
+        previously[thiscfg] = spins
         spins = spins + 1
     end
     return count(G)
