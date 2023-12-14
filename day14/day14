@@ -122,12 +122,12 @@ function solve(G, p)
         G=spin(G)
         spins = spins + 1
         local thiscfg = gridtostring(G)
-        if previously[thiscfg] then
+        if not previously[thiscfg] then
+            previously[thiscfg] = spins
+        else
             local cyclelength = spins - previously[thiscfg]
             local remainingcycles = (maxspins-spins)//cyclelength
             spins = spins + remainingcycles * cyclelength
-        else
-            previously[thiscfg] = spins
         end
     end
     return count(G)
