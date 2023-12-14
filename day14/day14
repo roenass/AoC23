@@ -19,26 +19,6 @@ function split(pString, pPattern)
    return Table
 end
 
-function max(a, b)
-    if a > b then return a end
-    return b
-end
-
-function min(a, b)
-    if a < b then return a end
-    return b
-end
-
-function rowstring(G, row)
-    return table.concat(G[row])
-end
-
-function columnstring(G, col)
-    colstr=''
-    for i = 1, #G do colstr = colstr..G[i][col] end
-    return colstr
-end
-
 function readgrids(input)
     local grids = {}
     for g, gridinput in pairs(split(input, '\n\n')) do
@@ -61,39 +41,6 @@ function readgrid(input)
     return grid
 end
 
-function rotategrid(G)
--- assumes the grid to be rectangular
-    local grid={}
-
-    for c=1, #G[1] do
-        grid[c] = {}
-        for i = 1, #G do grid[c][i] = G[i][c] end
-     end
-    return grid
-end
-
-function printgrid(G)
-    for i=1, #G do
-        print(i, rowstring(G, i))
-    end
-    return G
-end
-
-function printgridstring(G)
-    for i=1, #G do
-        print(i, G[i])
-    end
-    return G
-end
-
-function gridtostrings(G)
-    local grid={}
-    for i = 1, #G do
-        grid[i]=table.concat(G[i])
-    end
-    return grid
-end
-
 function gridtostring(G)
     local str=''
     for i = 1, #G do
@@ -101,8 +48,6 @@ function gridtostring(G)
     end
     return str
 end
-
-
 
 function tiltnorth(G)
     for _=2, #G do
@@ -117,7 +62,6 @@ function tiltnorth(G)
     end
     return G
 end
-
 
 function tiltwest(G)
     for _=2, #G[1] do
@@ -175,9 +119,6 @@ function count(G)
     return count
 end
 
-function save(G)
-    return gridtostring(G)
-end
 
 function spin(G)
     return tilteast(tiltsouth(tiltwest(tiltnorth(G))))
@@ -192,7 +133,7 @@ function solve(G, p)
     local spins=1
     while spins <= maxspins do
         G=spin(G)
-        local thiscfg = save(G)
+        local thiscfg = gridtostring(G)
         if cache[thiscfg] ~= nil then
             local cycle = spins - cache[thiscfg]
             local remainingcycles = (maxspins-spins)//cycle
