@@ -126,8 +126,9 @@ function solve(G, p)
             local cyclelength = spins - previously[thiscfg]
             local remainingcycles = (maxspins-spins)//cyclelength
             spins = spins + remainingcycles * cyclelength
+        else
+            previously[thiscfg] = spins
         end
-        previously[thiscfg] = spins
     end
     return count(G)
 end
