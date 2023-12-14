@@ -117,9 +117,10 @@ function solve(G, p)
     
     local previously = {}
     local maxspins=1000000000
-    local spins=1
-    while spins <= maxspins do
+    local spins=0
+    while spins < maxspins do
         G=spin(G)
+        spins = spins + 1
         local thiscfg = gridtostring(G)
         if previously[thiscfg] then
             local cyclelength = spins - previously[thiscfg]
@@ -127,7 +128,6 @@ function solve(G, p)
             spins = spins + remainingcycles * cyclelength
         end
         previously[thiscfg] = spins
-        spins = spins + 1
     end
     return count(G)
 end
