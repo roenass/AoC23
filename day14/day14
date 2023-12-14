@@ -1,0 +1,220 @@
+#!/usr/bin/env lua
+
+function split(pString, pPattern)
+   local Table = {}
+   local fpat = "(.-)" .. pPattern
+   local last_end = 1
+   local s, e, cap = pString:find(fpat, 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+     table.insert(Table,cap)
+      end
+      last_end = e+1
+      s, e, cap = pString:find(fpat, last_end)
+   end
+   if last_end <= #pString then
+      cap = pString:sub(last_end)
+      table.insert(Table, cap)
+   end
+   return Table
+end
+
+function max(a, b)
+    if a > b then return a end
+    return b
+end
+
+function min(a, b)
+    if a < b then return a end
+    return b
+end
+
+function rowstring(G, row)
+    return table.concat(G[row])
+end
+
+function columnstring(G, col)
+    colstr=''
+    for i = 1, #G do colstr = colstr..G[i][col] end
+    return colstr
+end
+
+function readgrids(input)
+    local grids = {}
+    for g, gridinput in pairs(split(input, '\n\n')) do
+        grids[g]={}
+        grids[g]=readgrid(gridinput)
+    end
+    return grids
+end
+
+function readgrid(input)
+    local grid={}
+    for r, line in pairs(split(input, '\n')) do
+        grid[r]={}
+        j=1
+        for c in string.gmatch(line, ".") do
+           grid[r][j] = c
+           j=j+1
+        end
+    end
+    return grid
+end
+
+function rotategrid(G)
+-- assumes the grid to be rectangular
+    local grid={}
+
+    for c=1, #G[1] do
+        grid[c] = {}
+        for i = 1, #G do grid[c][i] = G[i][c] end
+     end
+    return grid
+end
+
+function printgrid(G)
+    for i=1, #G do
+        print(i, rowstring(G, i))
+    end
+    return G
+end
+
+function printgridstring(G)
+    for i=1, #G do
+        print(i, G[i])
+    end
+    return G
+end
+
+function gridtostrings(G)
+    local grid={}
+    for i = 1, #G do
+        grid[i]=table.concat(G[i])
+    end
+    return grid
+end
+
+function gridtostring(G)
+    local str=''
+    for i = 1, #G do
+        str = str..table.concat(G[i])
+    end
+    return str
+end
+
+
+
+function tiltnorth(G)
+    for _=2, #G do
+        for i=2, #G do
+            for j, object in pairs(G[i]) do
+                if object == 'O' and G[i-1][j] == '.' then
+                    G[i-1][j] = 'O'
+                    G[i][j]   = '.'
+                end
+            end        
+        end
+    end
+    return G
+end
+
+
+function tiltwest(G)
+    for _=2, #G[1] do
+        for j=2, #G[1] do
+            for i, g in pairs(G) do
+                object=G[i][j]
+                if object == 'O' and G[i][j-1] == '.' then
+                    G[i][j]   = '.'
+                    G[i][j-1] = 'O'
+                end
+            end        
+        end
+    end
+    return G
+end
+
+function tiltsouth(G)
+    for _=2, #G do
+        for i=1, #G-1 do
+            for j, object in pairs(G[i]) do
+                if object == 'O' and G[i+1][j] == '.' then
+                    G[i+1][j] = 'O'
+                    G[i][j]   = '.'
+                end
+            end        
+        end
+    end
+    return G
+end
+
+function tilteast(G)
+    for _=2, #G[1] do
+        for j=1, #G[1]-1 do
+            for i, g in pairs(G) do
+                object=G[i][j]
+                if object == 'O' and G[i][j+1] == '.' then
+                    G[i][j+1] = 'O'
+                    G[i][j]   = '.'
+                end
+            end        
+        end
+    end
+    return G
+end
+
+function count(G)
+    local count=0
+    for i=1, #G do
+        for j, object in pairs(G[i]) do
+            if object == 'O' then
+                count = count + #G-i+1
+            end
+        end        
+    end
+    return count
+end
+
+function save(G)
+    return gridtostring(G)
+end
+
+function spin(G)
+    return tilteast(tiltsouth(tiltwest(tiltnorth(G))))
+end
+
+
+function solve(G, p)
+    if p==1 then return count(tiltnorth(G)) end
+    
+    local cache = {}        -- gonna skip cycles
+    local maxspins=1000000000
+    local spins=1
+    while spins <= maxspins do
+        G=spin(G)
+        local thiscfg = save(G)
+        if cache[thiscfg] ~= nil then
+            local cycle = spins - cache[thiscfg]
+            local remainingcycles = (maxspins-spins)//cycle
+            spins = spins + remainingcycles * cycle
+        end
+        cache[thiscfg] = spins
+        spins = spins + 1
+    end
+    return count(G)
+end
+
+-------------------------------------------------------------------------------
+-- Main
+-------------------------------------------------------------------------------
+
+grids = readgrids(io.read("*all"))
+
+for ip, p in pairs({1, 2}) do
+    local total=0
+    for ig, g in pairs(grids) do
+        total = total + solve(g, p)
+    end
+    print('part '..p,  total)
+end
+
