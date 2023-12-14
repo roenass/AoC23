@@ -111,7 +111,7 @@ end
 function spin(G)
     return tilteast(tiltsouth(tiltwest(tiltnorth(G))))
 end
-
+    
 function solve(G, p)
     if p==1 then return count(tiltnorth(G)) end
     
@@ -121,7 +121,7 @@ function solve(G, p)
     while spins <= maxspins do
         G=spin(G)
         local thiscfg = gridtostring(G)
-        if previously[thiscfg] ~= nil then
+        if previously[thiscfg] then
             local cyclelength = spins - previously[thiscfg]
             local remainingcycles = (maxspins-spins)//cyclelength
             spins = spins + remainingcycles * cyclelength
