@@ -108,11 +108,9 @@ function count(G)
     return count
 end
 
-
 function spin(G)
     return tilteast(tiltsouth(tiltwest(tiltnorth(G))))
 end
-
 
 function solve(G, p)
     if p==1 then return count(tiltnorth(G)) end
