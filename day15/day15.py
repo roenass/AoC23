@@ -20,19 +20,19 @@ boxes = [[] for _ in range(256)]
 for step in steps:
   if step[-1]=='-':
     label = step[:-1]
-    b = hash(label)
-    boxes[b] = [(l,f) for (l,f) in boxes[b] if l!=label]
+    box = hash(label)
+    boxes[box] = [(lbl,fcs) for (lbl,fcs) in boxes[box] if lbl!=label]
   elif step[-2]=='=':
     label = step[:-2]
-    b = hash(label)
+    box = hash(label)
     lastslot = int(step[-1])
-    if label in [l for (l,f) in boxes[b]]:
-      boxes[b] = [(l, lastslot if l==label else f) for (l,f) in boxes[b]]
+    if label in [lbl for (lbl,fcs) in boxes[box]]:
+      boxes[box] = [(lbl, lastslot if lbl==label else fcs) for (lbl,fcs) in boxes[box]]
     else:
-      boxes[b].append((label, lastslot))
+      boxes[box].append((label, lastslot))
 
 p2 = 0
 for i,boxes in enumerate(boxes):
-  for j,(l,f) in enumerate(boxes):
-    p2 += (i+1)*(j+1)*f
+  for j,(lbl,fcs) in enumerate(boxes):
+    p2 += (i+1)*(j+1)*fcs
 print(p2)
