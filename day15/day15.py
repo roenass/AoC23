@@ -11,10 +11,10 @@ def hash(s):
 
 steps = commands.split(',')
 
-p1 = 0
+p1sum = 0
 for step in steps:
-  p1 += hash(step)
-print(p1)
+  p1sum += hash(step)
+print(p1sum)
 
 boxes = [[] for _ in range(256)]
 for step in steps:
