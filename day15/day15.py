@@ -31,8 +31,8 @@ for step in steps:
     else:
       boxes[box].append((label, lastslot))
 
-p2 = 0
+p2total = 0
 for i,boxes in enumerate(boxes):
   for j,(lbl,fcs) in enumerate(boxes):
-    p2 += (i+1)*(j+1)*fcs
-print(p2)
+    p2total += (i+1)*(j+1)*fcs
+print(p2total)
