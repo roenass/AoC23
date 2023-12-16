@@ -1,0 +1,124 @@
+#!/usr/bin/env julia
+using DataStructures
+
+function readblocks()
+    split(read(stdin, String), r"\n\n")
+end
+
+function readgrid(b)
+    lines= split(b, '\n')
+    rows=length(lines)
+    cols=length(collect(lines[1]))
+    G=Matrix{Union{Nothing,Char}}(nothing, rows, cols)
+    for i in 1:rows
+        chars = collect(lines[i])
+        for j in 1:cols
+            G[i,j] = chars[j]
+        end
+    end
+    return G
+end
+
+function row(G, r)
+    G[r,:]
+end
+
+function printgrid(G)
+    for i in 1:length(G[:,1])
+        println(join(row(G, i)))
+    end
+end
+
+function col(G, c)
+    G[:,c]
+end
+
+function solve1(G, beam)
+    Q=Queue{Tuple{Int,Int,Int,Int}}()
+    Seen=Set{Tuple{Int,Int,Int,Int}}()
+    #a = (1, 0, 0, 1)
+    enqueue!(Q, beam)
+    while length(Q) > 0
+        r, c, hor, ver = dequeue!(Q)
+        r += hor
+        c += ver
+
+        if r < 1 || r > length(G[:,1]) || c < 1 || c > length(G[1,:])
+            #println("out of bounds")
+            continue
+        end
+        cr = G[r,c]
+        #println("row ", r, " col ", c, " char ", cr)
+        if cr == '.' || (cr == '-' && ver != 0) || (cr == '|' && hor != 0)
+            if (r, c, hor, ver) ∉ Seen
+                push!(Seen, (r, c, hor, ver))
+                enqueue!(Q, (r, c, hor, ver))
+            end
+        elseif cr == '/'
+            hor, ver = -ver, -hor
+            if (r, c, hor, ver) ∉ Seen
+                push!(Seen, (r, c, hor, ver))
+                enqueue!(Q, (r, c, hor, ver))
+            end
+        elseif cr == '\\'
+            hor, ver = ver, hor
+            if (r, c, hor, ver) ∉ Seen
+                push!(Seen, (r, c, hor, ver))
+                enqueue!(Q, (r, c, hor, ver))
+            end
+        elseif cr == '|'
+            for (hor, ver) in [(1, 0), (-1, 0)]
+                if (r, c, hor, ver) ∉ Seen
+                    push!(Seen, (r, c, hor, ver))
+                    enqueue!(Q, (r, c, hor, ver))
+                end
+            end
+        elseif cr == '-'
+            for (hor, ver) in [(0, 1), (0, -1)]
+                if (r, c, hor, ver) ∉ Seen
+                    push!(Seen, (r, c, hor, ver))
+                    enqueue!(Q, (r, c, hor, ver))
+                end
+            end
+        else
+            println("strange char ", cr)
+
+        end
+    end
+    
+    Energised=Set{Tuple{Int,Int}}()
+    for (r, c, _, _) in Seen
+        push!(Energised, (r, c))
+    end
+    return length(Energised)
+    
+# coords = {(r, c) for (r, c, _, _) in seen}
+end
+
+function solveall(G)
+    top=0
+    rows=length(G[:,1])
+    cols=length(G[1,:])
+    for r in 1:rows
+        top=max(top, solve1(G, (r,      0,  0,  1))) 
+        top=max(top, solve1(G, (r, cols+1,  0, -1))) 
+    end
+    for c in 1:cols
+        top=max(top, solve1(G, (0,      c,  1,  0))) 
+        top=max(top, solve1(G, (rows+1, c, -1,  0))) 
+    end
+    return top
+end
+
+
+################################################################################
+#### M A I N                                                                ####
+################################################################################
+
+blocks=readblocks()
+for i in eachindex(blocks)
+    if blocks[i] == "" continue end
+    G=readgrid(blocks[i])
+    println("part 1 ", solve1(G, (1, 0, 0, 1)))
+    println("part 2 ", solveall(G))
+end
