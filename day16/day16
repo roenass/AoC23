@@ -6,7 +6,7 @@ function readblocks()
 end
 
 function readgrid(b)
-    lines= split(b, '\n')
+    lines=split(b, '\n')
     rows=length(lines)
     cols=length(collect(lines[1]))
     G=Matrix{Union{Nothing,Char}}(nothing, rows, cols)
