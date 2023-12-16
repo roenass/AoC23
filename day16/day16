@@ -81,11 +81,15 @@ function solveall(G)
     return top
 end
 
-
-blocks=readblocks()
-for i in eachindex(blocks)
-    if blocks[i] == "" continue end
-    G=readgrid(blocks[i])
-    println("part 1 ", solve1(G, (1, 0, 0, 1)))
-    println("part 2 ", solveall(G))
+function solve16(blocks)
+    for i in eachindex(blocks)
+        if blocks[i] == "" continue end
+        G=readgrid(blocks[i])
+        println("part 1 ", solve1(G, (1, 0, 0, 1)))
+        println("part 2 ", solveall(G))
+    end
 end
+
+
+solve16(readblocks())
+
