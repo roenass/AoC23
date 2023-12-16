@@ -36,7 +36,7 @@ function beancounter(Q, S, T)
     push!(S, T);    enqueue!(Q, T)
 end
 
-function solve1(G, beam)
+function solve16one(G, beam)
     Q   =Queue{Tuple{Int,Int,Int,Int}}()
     Seen=Set{Tuple{Int,Int,Int,Int}}()
 
@@ -68,15 +68,15 @@ function solve1(G, beam)
     return length(Energised)
 end
 
-function solveall(G)
+function solve16all(G)
     top=0;  rows=length(G[:,1]);    cols=length(G[1,:])
     for r in 1:rows
-        top=max(top, solve1(G, (r,      0,  0,  1)))
-        top=max(top, solve1(G, (r, cols+1,  0, -1)))
+        top=max(top, solve16one(G, (r,      0,  0,  1)))
+        top=max(top, solve16one(G, (r, cols+1,  0, -1)))
     end
     for c in 1:cols
-        top=max(top, solve1(G, (0,      c,  1,  0)))
-        top=max(top, solve1(G, (rows+1, c, -1,  0)))
+        top=max(top, solve16one(G, (0,      c,  1,  0)))
+        top=max(top, solve16one(G, (rows+1, c, -1,  0)))
     end
     return top
 end
@@ -85,11 +85,9 @@ function solve16(blocks)
     for i in eachindex(blocks)
         if blocks[i] == "" continue end
         G=readgrid(blocks[i])
-        println("part 1 ", solve1(G, (1, 0, 0, 1)))
-        println("part 2 ", solveall(G))
+        println("part 1 ", solve16one(G, (1, 0, 0, 1)))
+        println("part 2 ", solve16all(G))
     end
 end
 
-
 solve16(readblocks())
-
