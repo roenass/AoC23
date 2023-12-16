@@ -43,8 +43,8 @@ function solve16one(G, beam)
     enqueue!(Q, beam)
     while length(Q) > 0
         r, c, hor, ver = dequeue!(Q)
-        r += hor
-        c += ver
+        r, c = r+hor, c+ver
+
         if r < 1 || r > length(G[:,1]) || c < 1 || c > length(G[1,:])   continue    end
         cr = G[r,c]
         if cr == '.' || (cr == '|' && hor != 0) || (cr == '-' && ver != 0)
