@@ -44,7 +44,6 @@ function solve1(G, beam)
         c += ver
 
         if r < 1 || r > length(G[:,1]) || c < 1 || c > length(G[1,:])
-            #println("out of bounds")
             continue
         end
         cr = G[r,c]
@@ -82,7 +81,6 @@ function solve1(G, beam)
             end
         else
             println("strange char ", cr)
-
         end
     end
 
