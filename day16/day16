@@ -13,9 +13,9 @@ function readgrid(b)
     lines=readlines(b)
     rows=length(lines); cols=length(lines[1])
     G=Matrix{Union{Nothing,Char}}(nothing, rows, cols)
-    for i in 1:rows
+    for i ∈ 1:rows
         chars = collect(lines[i])
-        for j in 1:cols G[i,j] = chars[j]   end
+        for j ∈ 1:cols G[i,j] = chars[j]   end
     end
     return G
 end
@@ -25,7 +25,7 @@ function row(G, r)
 end
 
 function printgrid(G)
-    for r in 1:length(G[:,1])   println(join(row(G, r)))    end
+    for r ∈ 1:length(G[:,1])   println(join(row(G, r)))    end
 end
 
 function col(G, c)
@@ -56,7 +56,7 @@ function solve16one(G, beam)
             hor, ver = ver, hor
             if (r, c, hor, ver) ∉ Seen      beancounter(Q, Seen, (r, c, hor, ver))  end
         elseif cr == '|' || cr == '-'
-            for (hor, ver) in (cr=='|' ? [(1, 0), (-1, 0)] : [(0, 1), (0, -1)])
+            for (hor, ver) ∈ (cr=='|' ? [(1, 0), (-1, 0)] : [(0, 1), (0, -1)])
                 if (r, c, hor, ver) ∉ Seen  beancounter(Q, Seen, (r, c, hor, ver))  end
             end
         else
@@ -64,17 +64,17 @@ function solve16one(G, beam)
         end
     end
     Energised=Set{Tuple{Int,Int}}()
-    for (r, c, _, _) in Seen    push!(Energised, (r, c))    end
+    for (r, c, _, _) ∈ Seen    push!(Energised, (r, c))    end
     return length(Energised)
 end
 
 function solve16all(G)
     top=0;  rows=length(G[:,1]);    cols=length(G[1,:])
-    for r in 1:rows
+    for r ∈ 1:rows
         top=max(top, solve16one(G, (r,      0,  0,  1)))
         top=max(top, solve16one(G, (r, cols+1,  0, -1)))
     end
-    for c in 1:cols
+    for c ∈ 1:cols
         top=max(top, solve16one(G, (0,      c,  1,  0)))
         top=max(top, solve16one(G, (rows+1, c, -1,  0)))
     end
@@ -82,7 +82,7 @@ function solve16all(G)
 end
 
 function solve16(blocks)
-    for i in eachindex(blocks)
+    for i ∈ eachindex(blocks)
         if blocks[i] == "" continue end
         G=readgrid(blocks[i])
         println("part 1 ", solve16one(G, (1, 0, 0, 1)))
