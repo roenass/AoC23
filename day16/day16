@@ -47,7 +47,7 @@ function solve1(G, beam)
         c += ver
         if r < 1 || r > length(G[:,1]) || c < 1 || c > length(G[1,:])   continue    end
         cr = G[r,c]
-        if cr == '.' || (cr == '-' && ver != 0) || (cr == '|' && hor != 0)
+        if cr == '.' || (cr == '|' && hor != 0) || (cr == '-' && ver != 0)
             if (r, c, hor, ver) ∉ Seen      beancounter(Q, Seen, (r, c, hor, ver))  end
         elseif cr == '/'
             hor, ver = -ver, -hor
@@ -55,12 +55,8 @@ function solve1(G, beam)
         elseif cr == '\\'
             hor, ver = ver, hor
             if (r, c, hor, ver) ∉ Seen      beancounter(Q, Seen, (r, c, hor, ver))  end
-        elseif cr == '|'
-            for (hor, ver) in [(1, 0), (-1, 0)]
-                if (r, c, hor, ver) ∉ Seen  beancounter(Q, Seen, (r, c, hor, ver))  end
-            end
-        elseif cr == '-'
-            for (hor, ver) in [(0, 1), (0, -1)]
+        elseif cr == '|' || cr == '-'
+            for (hor, ver) in (cr=='|' ? [(1, 0), (-1, 0)] : [(0, 1), (0, -1)])
                 if (r, c, hor, ver) ∉ Seen  beancounter(Q, Seen, (r, c, hor, ver))  end
             end
         else
