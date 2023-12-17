@@ -28,3 +28,11 @@ end
 function col(G, c)
     G[:,c]
 end
+
+function rows(G)
+    length(col(G, 1))
+end
+
+function cols(G)
+    length(col(G, 1))
+end

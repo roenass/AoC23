@@ -7,47 +7,47 @@ function beancounter(Q, S, T)
     push!(S, T);    enqueue!(Q, T)
 end
 
-function solve16one(G, beam)
-    Q   =Queue{Tuple{Int,Int,Int,Int}}()
-    Seen=Set{Tuple{Int,Int,Int,Int}}()
+function solve16one(G, Beam)
+    Q  =Queue{Tuple{Int,Int,Int,Int}}()
+    Djv=Set{Tuple{Int,Int,Int,Int}}()
+    Nrg=Set{Tuple{Int,Int}}()
 
-    enqueue!(Q, beam)
+    enqueue!(Q, Beam)
     while length(Q) > 0
         r, c, hor, ver = dequeue!(Q)
         r, c = r+hor, c+ver
 
-        if r < 1 || r > length(G[:,1]) || c < 1 || c > length(G[1,:])   continue    end
+        if r<1 || r>rows(G) || c<1 || c>cols(G) continue    end
         cr = G[r,c]
-        if cr == '.' || (cr == '|' && hor != 0) || (cr == '-' && ver != 0)
-            if (r, c, hor, ver) ∉ Seen      beancounter(Q, Seen, (r, c, hor, ver))  end
+        if cr=='.' || (cr=='|' && hor!=0) || (cr=='-' && ver != 0)
+            if (r, c, hor, ver) ∉ Djv       beancounter(Q, Djv, (r, c, hor, ver))  end
         elseif cr == '/'
             hor, ver = -ver, -hor
-            if (r, c, hor, ver) ∉ Seen      beancounter(Q, Seen, (r, c, hor, ver))  end
+            if (r, c, hor, ver) ∉ Djv       beancounter(Q, Djv, (r, c, hor, ver))  end
         elseif cr == '\\'
             hor, ver = ver, hor
-            if (r, c, hor, ver) ∉ Seen      beancounter(Q, Seen, (r, c, hor, ver))  end
+            if (r, c, hor, ver) ∉ Djv       beancounter(Q, Djv, (r, c, hor, ver))  end
         elseif cr == '|' || cr == '-'
             for (hor, ver) ∈ (cr=='|' ? [(1, 0), (-1, 0)] : [(0, 1), (0, -1)])
-                if (r, c, hor, ver) ∉ Seen  beancounter(Q, Seen, (r, c, hor, ver))  end
+                if (r, c, hor, ver) ∉ Djv   beancounter(Q, Djv, (r, c, hor, ver))  end
             end
         else
             println("strange char ", cr)
         end
     end
-    Energised=Set{Tuple{Int,Int}}()
-    for (r, c, _, _) ∈ Seen    push!(Energised, (r, c))    end
-    return length(Energised)
+    for (r, c, _, _) ∈ Djv push!(Nrg, (r, c))  end
+    return length(Nrg)
 end
 
 function solve16all(G)
-    top=0;  rows=length(G[:,1]);    cols=length(G[1,:])
-    for r ∈ 1:rows
-        top=max(top, solve16one(G, (r,      0,  0,  1)))
-        top=max(top, solve16one(G, (r, cols+1,  0, -1)))
+    top=0;
+    for r ∈ 1:rows(G)
+        top=max(top, solve16one(G, (r,          0,          0,  1)))
+        top=max(top, solve16one(G, (r,          cols(G)+1,  0, -1)))
     end
-    for c ∈ 1:cols
-        top=max(top, solve16one(G, (0,      c,  1,  0)))
-        top=max(top, solve16one(G, (rows+1, c, -1,  0)))
+    for c ∈ 1:cols(G)
+        top=max(top, solve16one(G, (0,          c,          1,  0)))
+        top=max(top, solve16one(G, (rows(G)+1,  c,         -1,  0)))
     end
     return top
 end
