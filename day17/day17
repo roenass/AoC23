@@ -3,62 +3,48 @@ using DataStructures
 
 include("../lib/AoC.jl")
 
-function beancounter(Q, S, T)
-    push!(S, T);    enqueue!(Q, T)
-end
+function solve17(G, Beam, Part)
+    HP=BinaryMinHeap{Tuple{Int, Int, Int, Int, Int}}()
+    Djv=Dict{Tuple{Int,Int,Int,Int}, Int64}()
+    Moves=([-1,0],[0,1],[1,0],[0,-1])
+    result=-1
 
-function solve16one(G, Beam)
-    Q  =Queue{Tuple{Int,Int,Int,Int}}()
-    Djv=Set{Tuple{Int,Int,Int,Int}}()
-    Nrg=Set{Tuple{Int,Int}}()
-
-    enqueue!(Q, Beam)
-    while length(Q) > 0
-        r, c, hor, ver = dequeue!(Q)
-        r, c = r+hor, c+ver
-
-        if r<1 || r>rows(G) || c<1 || c>cols(G) continue    end
-        cr = G[r,c]
-        if cr=='.' || (cr=='|' && hor!=0) || (cr=='-' && ver != 0)
-            if (r, c, hor, ver) ∉ Djv       beancounter(Q, Djv, (r, c, hor, ver))  end
-        elseif cr == '/'
-            hor, ver = -ver, -hor
-            if (r, c, hor, ver) ∉ Djv       beancounter(Q, Djv, (r, c, hor, ver))  end
-        elseif cr == '\\'
-            hor, ver = ver, hor
-            if (r, c, hor, ver) ∉ Djv       beancounter(Q, Djv, (r, c, hor, ver))  end
-        elseif cr == '|' || cr == '-'
-            for (hor, ver) ∈ (cr=='|' ? [(1, 0), (-1, 0)] : [(0, 1), (0, -1)])
-                if (r, c, hor, ver) ∉ Djv   beancounter(Q, Djv, (r, c, hor, ver))  end
+    push!(HP, Beam)
+    while length(HP) > 0
+        (loss,r,c,lr,ud) = pop!(HP)
+        if haskey(Djv, (r,c,lr,ud)) continue end
+        Djv[(r,c,lr,ud)]=loss
+        for i ∈ 1:length(Moves)
+            (dr, dc) = Moves[i]
+            rr = r+dr;  cc = c+dc
+            nd = i-1
+            ni = (nd==lr ? ud+1 : 1)
+            notreverse = ((nd + 2)%4 != lr)
+            if Part == 1
+                isvalid = (ni<=3)
+            else
+                isvalid = (ni<=10 && (nd==lr || ud>=4 || ud==-1))
             end
-        else
-            println("strange char ", cr)
+            
+            if 1<=rr<=rows(G) && 1<=cc<=cols(G) && notreverse && isvalid
+                 cost = parse(Int, G[rr,cc])
+                 push!(HP, (loss+cost,rr,cc,nd,ni))
+            end
         end
     end
-    for (r, c, _, _) ∈ Djv push!(Nrg, (r, c))  end
-    return length(Nrg)
+    for (r,c,lr,ud) ∈ keys(Djv)
+        val=Djv[(r,c,lr,ud)]
+        if r==rows(G) && c==cols(G)
+            result = (result==-1 ? val : min(result, val))
+        end
+    end
+    return result
 end
 
-function solve16all(G)
-    top=0;
-    for r ∈ 1:rows(G)
-        top=max(top, solve16one(G, (r,          0,          0,  1)))
-        top=max(top, solve16one(G, (r,          cols(G)+1,  0, -1)))
-    end
-    for c ∈ 1:cols(G)
-        top=max(top, solve16one(G, (0,          c,          1,  0)))
-        top=max(top, solve16one(G, (rows(G)+1,  c,         -1,  0)))
-    end
-    return top
-end
-
-function solve16(blocks)
-    for i ∈ eachindex(blocks)
-        if blocks[i] == "" continue end
-        G=readgrid(blocks[i])
-        println("part 1 ", solve16one(G, (1, 0, 0, 1)))
-        println("part 2 ", solve16all(G))
+function solver(G)
+    for i  ∈ [1,2]
+        println("part ", i, " ", solve17(G, (0,1,1,-1,-1), i))
     end
 end
 
-solve16(readblocks())
+solver(readgrid(readblocks()[1]))
