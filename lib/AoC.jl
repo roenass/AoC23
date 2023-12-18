@@ -41,7 +41,7 @@ function col(G, c)
 end
 
 function rows(G)
-    length(col(G, 1))
+    length(row(G, 1))
 end
 
 function cols(G)
