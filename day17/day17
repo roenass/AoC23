@@ -27,7 +27,7 @@ function solve17(G, Beam, Part)
             end
             
             if 1<=rr<=rows(G) && 1<=cc<=cols(G) && notreverse && isvalid
-                 cost = parse(Int, G[rr,cc])
+                 cost = G[rr,cc]
                  push!(HP, (loss+cost,rr,cc,nd,ni))
             end
         end
@@ -47,4 +47,4 @@ function solver(G)
     end
 end
 
-solver(readgrid(readblocks()[1]))
+solver(readnumgrid(readblocks()[1]))

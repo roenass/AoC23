@@ -17,6 +17,17 @@ function readgrid(b)
     return G
 end
 
+function readnumgrid(b)
+    lines=readlines(b);
+    rows=length(lines); cols=length(lines[1])
+    G=Matrix{Union{Nothing,Int}}(nothing, rows, cols)
+    for i ∈ 1:rows
+        chars = collect(lines[i])
+        for j ∈ 1:cols G[i,j] = parse(Int, chars[j]) end
+    end
+    return G
+end
+
 function row(G, r)
     G[r,:]
 end
