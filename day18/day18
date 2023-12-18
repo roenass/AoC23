@@ -16,9 +16,10 @@ function solve18(L, Part)
     end
     sizex = maxx - minx + 1; sizey = maxy - miny + 1
     offx = -minx + 2; offy = -miny + 2
+#   println("Size: ", sizex,"x", sizey, " Max x,y ", maxx, ",", maxy, " Min x,y: ", minx, ",", miny, " Start x,y: ", offx, ",", offy)
     G=Matrix{String}(undef, sizex, sizey)
     fill!(G, ".")
-    (x, y) = (offy, offx)
+    (x, y) = (offx, offy)
     for line in L
         (dir, len, clr) = split(line); l=parse(Int, len)
         (movex, movey) = Moves[dir]
@@ -29,10 +30,13 @@ function solve18(L, Part)
     end
     for r ∈ 1:cols(G)
         enclose=false; enclosing=false
-        for i in 1:length(row(G,r))
+        for i ∈ 1:length(row(G,r))
             if G[r,i]=="#"
                 enclose = enclose==true&&enclosing==true ? false : true
-                if i<length(row(G,r)) && ("#" ∉ G[r,i+1:length(row(G,r))])
+                if i<length(row(G,r)) && ("#" ∈ G[r,i+1:length(row(G,r))])   # ∉
+                    enclose=true
+                end
+                if i<length(row(G,r)) && ("#" ∉ G[r,i+1:length(row(G,r))])   # ∉
                     enclose=false
                 end
                 if i<length(row(G,r)) && G[r,i+1] == '.' && "#" ∈ G[r,i+1:length(row(G,r))]
@@ -44,7 +48,7 @@ function solve18(L, Part)
         end
         enclose=false; enclosed=false
     end
-#    printgrid(G)
+    #printgrid(G)
     return count(i->(i=="#"), G)
 end
 
