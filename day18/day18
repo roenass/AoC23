@@ -5,33 +5,27 @@ include("../lib/AoC.jl")
 
 
 function solve18(L, Part)
-    #Dirs = Dict("R" => (0, 1), "L" => (0, -1), "U" => (-1, 0), "D" => (1, 0))
+    Moves = Dict("R" => (0, 1), "L" => (0, -1), "U" => (-1, 0), "D" => (1, 0))
     (x, y) = (maxx, maxy) = (minx, miny) = (1, 1)
-    for line in L
-        (dir, len, clr) = split(line); l=parse(Int, len)
-        if     dir == "R"   x+=l
-        elseif dir == "L"   x-=l
-        elseif dir == "U"   y-=l
-        elseif dir == "D"   y+=l
-        else   println("hunh ", dir) end
+    for line ∈ L
+        (dir, len, clr) = split(line); l=parse(Int, len)        
+        (movex, movey) = Moves[dir]
+        (x, y) = (x+movex*l, y+movey*l)
         maxx = max(maxx, x); maxy = max(maxy, y)
         minx = min(minx, x); miny = min(miny, y)
     end
     sizex = maxx - minx + 1; sizey = maxy - miny + 1
     offx = -minx + 2; offy = -miny + 2
-#    println("Size: ", sizex,"x", sizey, " Max x,y ", maxx, ",", maxy, " Min x,y: ", minx, ",", miny, " Start x,y: ", offx, ",", offy)
-    G=Matrix{String}(undef, sizey, sizex)
+    G=Matrix{String}(undef, sizex, sizey)
     fill!(G, ".")
     (x, y) = (offy, offx)
     for line in L
         (dir, len, clr) = split(line); l=parse(Int, len)
-        # Move
-        #(x,y) = (x + Dirs[dir][1], y+Dirs[dir][2])
-        if     dir == "R"   for i ∈ 1:l G[x,y+i] = "#" end; y+=l
-        elseif dir == "L"   for i ∈ 1:l G[x,y-i] = "#" end; y-=l
-        elseif dir == "U"   for i ∈ 1:l G[x-i,y] = "#" end; x-=l
-        elseif dir == "D"   for i ∈ 1:l G[x+i,y] = "#" end; x+=l
-        else   println("hunh ", dir) end
+        (movex, movey) = Moves[dir]
+        (movex, movey) = (x+movex*l, y+movey*l)
+        for i ∈ min(x,movex):max(x,movex) G[i, y] = "#" end
+        for i ∈ min(y,movey):max(y,movey) G[x, i] = "#" end
+        (x, y) = (movex, movey)
     end
     for r ∈ 1:cols(G)
         enclose=false; enclosing=false
@@ -40,6 +34,9 @@ function solve18(L, Part)
                 enclose = enclose==true&&enclosing==true ? false : true
                 if i<length(row(G,r)) && ("#" ∉ G[r,i+1:length(row(G,r))])
                     enclose=false
+                end
+                if i<length(row(G,r)) && G[r,i+1] == '.' && "#" ∈ G[r,i+1:length(row(G,r))]
+                    #enclose=true
                 end
                 enclosing=false
             end
