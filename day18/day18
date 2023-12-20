@@ -20,7 +20,7 @@ function solve18(L, Part)
     G=Matrix{String}(undef, sizex, sizey)
     fill!(G, ".")
     (x, y) = (offx, offy)
-    for line in L
+    for line ∈ L
         (dir, len, clr) = split(line); l=parse(Int, len)
         (movex, movey) = Moves[dir]
         (movex, movey) = (x+movex*l, y+movey*l)
@@ -48,7 +48,7 @@ function solve18(L, Part)
         end
         enclose=false; enclosed=false
     end
-    #printgrid(G)
+    #   printgrid(G)
     return count(i->(i=="#"), G)
 end
 
