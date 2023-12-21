@@ -5,49 +5,39 @@ include("../lib/AoC.jl")
 
 
 function start(G)
-    for c in 1:cols(G)
-        for r in 1:rows(G)
-            if G[c, r] == 'S'  return (c, r) end
-        end
-    end
+    for c ∈ 1:cols(G) for r ∈ 1:rows(G) if G[c, r] == 'S'  return (c, r) end end end
     return (-1, -1)
 end
-
 
 function wok(G, C, c, r, maxsteps, steps)
     if haskey(C, (c,r,steps)) return 0 end
     C[(c,r,steps)]=true
     if steps≥maxsteps
-        if c≥1 && c≤cols(G) && r≥1 && r≤rows(G) && G[c,r] in ['.', 'S']
+        if c≥1 && c≤cols(G) && r≥1 && r≤rows(G) && G[c,r] ∈ ['.', 'S']
             G[c,r] = 'o'
             return 1
         end
         return 0
     end
-    if c<1 || c>cols(G) || r<1 || r>rows(G) || G[c,r] in ['#']
-        return 0
-    end
+    if c<1 || c>cols(G) || r<1 || r>rows(G) || G[c,r] ∈ ['#'] return 0 end
     tiles=1
-    for (cm, rm) in [(0, 1), (0, -1), (-1, 0), (1, 0)]
+    for (cm, rm) ∈ [(0, 1), (0, -1), (-1, 0), (1, 0)]
         tiles += wok(G, C, c+cm, r+rm, maxsteps, steps+1)
-#        println("step ", steps, ' ', c+cm, ',', r+rm, ' ', tiles)
     end
     return tiles
 end
 
 function solve20(G, maxsteps)
-println("Max ", maxsteps)
     Djv=Dict{Tuple{Int,Int,Int}, Bool}()
     (startc, startr) = start(G)
-    visited=1
-    return visited + wok(G, Djv, startc, startr, maxsteps, 0)
+    wok(G, Djv, startc, startr, maxsteps, 0)
+    return count(c->(c=='o'), G)
 end
 
 function solver(b)
     for p ∈ [1, 2]
         G=readgrid(b)
-        println("tiles: ", solve20(G,p==1 ? 64 : 26501365))
-        println("part ", p, " ", count(c->(c=='o'), G))
+        println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
     end
 end
 
