@@ -30,14 +30,17 @@ end
 
 # wok like an egyptian
 function woklae(G, C, c, r, maxsteps, steps)
-    Q=Queue{Tuple{Int,Int,Int}}()
+    #Q=Queue{Tuple{Int,Int,Int}}()
+    Q=BinaryMaxHeap{Tuple{Int, Int, Int}}()
     T=Set{Tuple{Int,Int}}()
 
-    enqueue!(Q, (c, r, steps))
+    #enqueue!(Q, (steps, c, r))
+    push!(Q, (steps, c, r))
     while length(Q) > 0
-        c, r, s = dequeue!(Q)
-        if haskey(C, (c,r,s)) continue end
-        C[(c,r,s)]=true
+#         s, c, r = dequeue!(Q)
+        s, c, r = pop!(Q)
+        if haskey(C,(s,c,r)) continue end
+        C[(s,c,r)]=true
         if s≥maxsteps
             if c≥1 && c≤cols(G) && r≥1 && r≤rows(G) && G[c,r] ∈ ['.', 'S']
                 G[c,r] = 'o'
@@ -47,7 +50,8 @@ function woklae(G, C, c, r, maxsteps, steps)
         end
         if c<1 || c>cols(G) || r<1 || r>rows(G) || G[c,r] ∈ ['#'] continue end
         for (cm, rm) ∈ [(0, 1), (0, -1), (-1, 0), (1, 0)]
-            enqueue!(Q, (c+cm, r+rm, s+1))
+#             enqueue!(Q, (s+1, c+cm, r+rm))
+            push!(Q, (s+1, c+cm, r+rm))
         end
     end
     return length(T)
