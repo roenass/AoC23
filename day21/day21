@@ -29,8 +29,9 @@ function wok(G, C, c, r, maxsteps, steps)
 end
 
 # wok like an egyptian
-function woklae(G, Q, C, c, r, maxsteps, steps)
-    Tiles=Set{Tuple{Int,Int}}()
+function woklae(G, C, c, r, maxsteps, steps)
+    Q=Queue{Tuple{Int,Int,Int}}()
+    T=Set{Tuple{Int,Int}}()
 
     enqueue!(Q, (c, r, steps))
     while length(Q) > 0
@@ -40,7 +41,7 @@ function woklae(G, Q, C, c, r, maxsteps, steps)
         if s≥maxsteps
             if c≥1 && c≤cols(G) && r≥1 && r≤rows(G) && G[c,r] ∈ ['.', 'S']
                 G[c,r] = 'o'
-                push!(Tiles, (c, r))
+                push!(T, (c, r))
             end
             continue
         end
@@ -49,7 +50,7 @@ function woklae(G, Q, C, c, r, maxsteps, steps)
             enqueue!(Q, (c+cm, r+rm, s+1))
         end
     end
-    return length(Tiles)
+    return length(T)
 end
 
 function solve20(G, maxsteps)
@@ -61,9 +62,8 @@ end
 
 function solve20lae(G, maxsteps)
     Djv=Dict{Tuple{Int,Int,Int}, Bool}()
-    Q  =Queue{Tuple{Int,Int,Int}}()
     (startc, startr) = start(G)
-    println("egyptian: ", woklae(G, Q, Djv, startc, startr, maxsteps, 0))
+    println("egyptian: ", woklae(G, Djv, startc, startr, maxsteps, 0))
     return count(c->(c=='o'), G)
 end
 
