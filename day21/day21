@@ -68,8 +68,8 @@ function solve20lae(G, maxsteps)
 end
 
 function solver(b)
-    for p ∈ [1]
-        G=readgrid(b); println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
+    for p ∈ [1,2]
+        #G=readgrid(b); println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
         G=readgrid(b); println("part ", p, " ", solve20lae(G,p==1 ? 64 : 26501365))
     end
 end
