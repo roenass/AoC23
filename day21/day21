@@ -27,6 +27,29 @@ function wok(G, C, c, r, maxsteps, steps)
     return tiles
 end
 
+function woklae(G, Q, C, c, r, maxsteps, steps)
+    Tiles=Set{Tuple{Int,Int}}()
+
+    enqueue!(Q, (c, r, steps))
+    while length(Q) > 0
+        c, r, s = dequeue!(Q)
+        if haskey(C, (c,r,s)) continue end
+        C[(c,r,s)]=true
+        if s≥maxsteps
+            if c≥1 && c≤cols(G) && r≥1 && r≤rows(G) && G[c,r] ∈ ['.', 'S']
+                G[c,r] = 'o'
+                push!(Tiles, (c, r))
+            end
+            continue
+        end
+        if c<1 || c>cols(G) || r<1 || r>rows(G) || G[c,r] ∈ ['#'] continue end
+        for (cm, rm) ∈ [(0, 1), (0, -1), (-1, 0), (1, 0)]
+            enqueue!(Q, (c+cm, r+rm, s+1))
+        end
+    end
+    return length(Tiles)
+end
+
 function solve20(G, maxsteps)
     Djv=Dict{Tuple{Int,Int,Int}, Bool}()
     (startc, startr) = start(G)
@@ -34,10 +57,17 @@ function solve20(G, maxsteps)
     return count(c->(c=='o'), G)
 end
 
+function solve20lae(G, maxsteps)
+    Djv=Dict{Tuple{Int,Int,Int}, Bool}()
+    Q  =Queue{Tuple{Int,Int,Int}}()
+    (startc, startr) = start(G)
+    return woklae(G, Q, Djv, startc, startr, maxsteps, 0)
+end
+
 function solver(b)
     for p ∈ [1, 2]
-        G=readgrid(b)
-        println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
+        #G=readgrid(b); println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
+        G=readgrid(b); println("part ", p, " ", solve20lae(G,p==1 ? 64 : 26501365))
     end
 end
 
