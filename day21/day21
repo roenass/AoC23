@@ -9,6 +9,7 @@ function start(G)
     return (-1, -1)
 end
 
+# jus-telegant, but will run out of stack
 function wok(G, C, c, r, maxsteps, steps)
     if haskey(C, (c,r,steps)) return 0 end
     C[(c,r,steps)]=true
@@ -27,6 +28,7 @@ function wok(G, C, c, r, maxsteps, steps)
     return tiles
 end
 
+# wok like an egyptian
 function woklae(G, Q, C, c, r, maxsteps, steps)
     Tiles=Set{Tuple{Int,Int}}()
 
@@ -61,12 +63,13 @@ function solve20lae(G, maxsteps)
     Djv=Dict{Tuple{Int,Int,Int}, Bool}()
     Q  =Queue{Tuple{Int,Int,Int}}()
     (startc, startr) = start(G)
-    return woklae(G, Q, Djv, startc, startr, maxsteps, 0)
+    println("egyptian: ", woklae(G, Q, Djv, startc, startr, maxsteps, 0))
+    return count(c->(c=='o'), G)
 end
 
 function solver(b)
-    for p ∈ [1, 2]
-        #G=readgrid(b); println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
+    for p ∈ [1]
+        G=readgrid(b); println("part ", p, " ", solve20(G,p==1 ? 64 : 26501365))
         G=readgrid(b); println("part ", p, " ", solve20lae(G,p==1 ? 64 : 26501365))
     end
 end
