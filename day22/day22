@@ -106,6 +106,6 @@ sole_supports.sum { |idx|
     }
   end
 
-  # Less the brick that was removed
+  # Minus the brick that was removed
   fell.count - 1
 }.tap do |r| puts "2: #{r}" end
