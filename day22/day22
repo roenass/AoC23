@@ -25,8 +25,8 @@ end
 
 input     = STDIN.read()
 
-bricks = input.each_line.map do
-  _1.strip.split(?~).map { |pos| pos.split(?,).map(&:to_i) }
+bricks = input.each_line.map do |l|
+  l.strip.split(?~).map { |pos| pos.split(?,).map(&:to_i) }
 end
 
 bricks.sort_by! { |from, _| from.last }
@@ -48,10 +48,10 @@ bricks.each do |from, to|
     break if zmap[z1 - 1].any? { |other| intersect?(spec_brick, other) }
     from[2] -= 1
     to[2]   -= 1
-    (z1..z2).each {
-      zmap[_1].delete([from, to])
-      zmap[_1 - 1] << [from, to]
-    }
+    (z1..z2).each do |z|
+      zmap[z].delete([from, to])
+      zmap[z - 1] << [from, to]
+    end
   end
 end
 
@@ -68,9 +68,9 @@ bricks.each.with_index { |(from, to), bidx|
   supports = bricks.map.with_index
     .select { |other, _| intersect?(spec_brick, other) }
     .reject { |other, _| [from, to] == other }
-  supports.map(&:last).each {
-    above[_1] << bidx
-  }
+  supports.map(&:last).each do |b|
+    above[b] << bidx
+  end
   below[bidx] = supports.map(&:last)
   if supports.count == 1
     sole_supports << supports.first.last
@@ -87,7 +87,7 @@ sole_supports.sum { |idx|
 
   pretenders = Set.new
 
-  above[idx].each { pretenders << _1 }
+  above[idx].each do |p| pretenders << p end
 
   falling = true
   while falling
@@ -96,10 +96,10 @@ sole_supports.sum { |idx|
     # to_a to allow modification of pretenders while iterating through it
     pretenders.to_a.each { |wannabe|
       # Check if this wannabe has all their supports removed
-      if below[wannabe].all? { fell.include?(_1) }
+      if below[wannabe].all? do |b| fell.include?(b) end
         pretenders.delete(wannabe)
         fell << wannabe
-        above[wannabe].each { pretenders << _1 }
+        above[wannabe].each do |b| pretenders << b end
         falling = true
         break
       end
@@ -108,4 +108,4 @@ sole_supports.sum { |idx|
 
   # Less the brick that was removed
   fell.count - 1
-}.tap { puts "2: #{_1}" }
+}.tap do |r| puts "2: #{r}" end
