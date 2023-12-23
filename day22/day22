@@ -93,7 +93,6 @@ sole_supports.sum { |idx|
   while falling
     falling = false
 
-    # to_a to allow modification of pretenders while iterating through it
     pretenders.to_a.each { |wannabe|
       # Check if this wannabe has all their supports removed
       if below[wannabe].all? do |b| fell.include?(b) end
@@ -106,6 +105,6 @@ sole_supports.sum { |idx|
     }
   end
 
-  # Minus the brick that was removed
+  # Minus the removed brick
   fell.count - 1
 }.tap do |r| puts "2: #{r}" end
